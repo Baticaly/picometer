@@ -1,10 +1,9 @@
 #include <stdio.h>
+#include <math.h>
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
 #include "hardware/adc.h"
 
-#define N_SAMPLES 1000
-uint16_t sample_buf[N_SAMPLES];
 void __not_in_flash_func(adc_capture)(uint16_t *buf, size_t count)
 {
     adc_fifo_setup(true, false, 0, false, false);
@@ -38,7 +37,6 @@ int main(void)
         adc_select_input('0' - '0');
 
         uint32_t result = adc_read();
-        const float conversion_factor = 3.3f / (1 << 12);
-        printf("%f\n", result, result * conversion_factor);
+        printf("%d\n", result);
     }
 }

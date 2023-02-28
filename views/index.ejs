@@ -12,69 +12,103 @@
 </head>
 
 <body>
-    <button class="connect-button">
+    <button id="connect">
         Scan
     </button>
 
-    <div style="max-width: 600px; max-height: 400px; padding: 10px">
+    <div id="chart"></div>
+    <div id="chart2"></div>
+    <div id="chart3"></div>
 
-        <div class="well">
-            <h4>D3 Based Real Time Chart
-        </div>
-
-        <div id="viewDiv"></div>
-
-    </div>
 </body>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+<script src="./javascripts/WebSerial.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script src="./javascripts/realtime.js"></script>
 
 <script>
 
-    document.querySelector('button').addEventListener('click', async () => {
+    let ADC0 = [0]
+    let lineBuffer = '';
+    let latestValue = 0;
+
+    var options = {
+        series: [{
+            data: ADC0
+        }],
+        chart: {
+            id: 'realtime',
+            height: 350,
+            type: 'line',
+            animations: {
+                enabled: true,
+                easing: 'linear',
+                dynamicAnimation: {
+                    speed: 1000
+                }
+            },
+            toolbar: {
+                show: false
+            },
+            zoom: {
+                enabled: false
+            }
+        },
+        dataLabels: {
+            enabled: false
+        },
+        stroke: {
+            curve: 'smooth'
+        },
+        title: {
+            text: 'Dynamic Updating Chart',
+            align: 'left'
+        },
+        markers: {
+            size: 0
+        },
+        legend: {
+            show: false
+        },
+    };
+
+    var chart = new ApexCharts(document.querySelector("#chart"), options);
+    chart.render();
+
+
+    async function getReader() {
         // Raspberry Pi Pico vendor & product id
         const filters = [{ usbVendorId: 11914, usbProductId: 10 }];
-        const port = await navigator.serial.requestPort({ filters });
 
+        port = await navigator.serial.requestPort({ filters });
         await port.open({ baudRate: 11520 });
 
-        const textDecoder = new TextDecoderStream();
-        const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
-        const reader = textDecoder.readable.getReader();
+        const appendStream = new WritableStream({
+            write(chunk) {
+                lineBuffer += chunk;
+                let lines = lineBuffer.split('\n');
 
-        while (true) {
-            const { value, done } = await reader.read();
-            if (done) {
-                reader.releaseLock();
-                break;
+                if (lines.length > 1) {
+                    lineBuffer = lines.pop();
+                    latestValue = parseInt(lines.pop().trim());
+
+                    ADC0.push(latestValue)
+                    chart.updateOptions({
+                        series: [{
+                            data: ADC0
+                        }],
+                    })
+
+                    console.log(ADC0)
+                }
             }
+        });
 
-            let currentValue = parseFloat(value)
-            console.log(currentValue, value);
-        }
+        port.readable
+            .pipeThrough(new TextDecoderStream())
+            .pipeTo(appendStream);
+    }
 
-        const textEncoder = new TextEncoderStream();
-        const writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
-
-        reader.cancel();
-        await readableStreamClosed.catch(() => { /* Ignore the error */ });
-
-        writer.close();
-        await writableStreamClosed;
-
-        await port.close();
-        await port.forget();
-    });
-
-    navigator.serial.addEventListener("connect", (event) => {
-        // TODO: Automatically open event.target or warn user a port is available.
-    });
-
-    navigator.serial.addEventListener("disconnect", (event) => {
-        // TODO: Remove |event.target| from the UI.
-        // If the serial port was opened, a stream error would be observed as well.
-    });
 
 </script>
 
