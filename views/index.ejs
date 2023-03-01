@@ -16,100 +16,19 @@
         Scan
     </button>
 
-    <div id="chart"></div>
-    <div id="chart2"></div>
-    <div id="chart3"></div>
+    <canvas id="ADC0" class="graph"></canvas>
+    <canvas id="ADC1" class="graph"></canvas>
+    <canvas id="ADC2" class="graph"></canvas>
 
 </body>
 
+<script type="module" src="./javascripts/chartModule.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.3.2"></script>
+<script src="https://cdn.jsdelivr.net/npm/luxon@1.27.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-streaming@2.0.0"></script>
+
 <script src="./javascripts/WebSerial.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-<script src="./javascripts/realtime.js"></script>
-
-<script>
-
-    let ADC0 = [0]
-    let lineBuffer = '';
-    let latestValue = 0;
-
-    var options = {
-        series: [{
-            data: ADC0
-        }],
-        chart: {
-            id: 'realtime',
-            height: 350,
-            type: 'line',
-            animations: {
-                enabled: true,
-                easing: 'linear',
-                dynamicAnimation: {
-                    speed: 1000
-                }
-            },
-            toolbar: {
-                show: false
-            },
-            zoom: {
-                enabled: false
-            }
-        },
-        dataLabels: {
-            enabled: false
-        },
-        stroke: {
-            curve: 'smooth'
-        },
-        title: {
-            text: 'Dynamic Updating Chart',
-            align: 'left'
-        },
-        markers: {
-            size: 0
-        },
-        legend: {
-            show: false
-        },
-    };
-
-    var chart = new ApexCharts(document.querySelector("#chart"), options);
-    chart.render();
-
-
-    async function getReader() {
-        // Raspberry Pi Pico vendor & product id
-        const filters = [{ usbVendorId: 11914, usbProductId: 10 }];
-
-        port = await navigator.serial.requestPort({ filters });
-        await port.open({ baudRate: 11520 });
-
-        const appendStream = new WritableStream({
-            write(chunk) {
-                lineBuffer += chunk;
-                let lines = lineBuffer.split('\n');
-
-                if (lines.length > 1) {
-                    lineBuffer = lines.pop();
-                    latestValue = parseInt(lines.pop().trim());
-
-                    ADC0.push(latestValue)
-                    chart.updateOptions({
-                        series: [{
-                            data: ADC0
-                        }],
-                    })
-
-                    console.log(ADC0)
-                }
-            }
-        });
-
-        port.readable
-            .pipeThrough(new TextDecoderStream())
-            .pipeTo(appendStream);
-    }
-
-
-</script>
+<script src="./javascripts/graphs.js"></script>
 
 </html>
