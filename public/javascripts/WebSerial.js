@@ -23,14 +23,15 @@ async function getReader() {
     const appendStream = new WritableStream({
         write(chunk) {
             lineBuffer += chunk;
-            let lines = lineBuffer.split('\n');
+            let values = lineBuffer.split('\n');
 
-            if (lines.length > 1) {
-                lineBuffer = lines.pop();
-                latestValue = parseInt(lines.pop().trim());
+            if (values.length > 1) {
+                lineBuffer = values.pop();
 
-                console.log(latestValue)
-                ADC0.data.datasets[0].data.push({ x: Date.now(), y: latestValue });
+                let channels = values.pop().trim().split('-')
+                ADC0.data.datasets[0].data.push({ x: Date.now(), y: channels[0] });
+                ADC1.data.datasets[0].data.push({ x: Date.now(), y: channels[1] });
+                ADC2.data.datasets[0].data.push({ x: Date.now(), y: channels[2] });
             }
         }
     });

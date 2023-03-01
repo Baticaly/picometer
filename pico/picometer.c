@@ -35,8 +35,14 @@ int main(void)
     while (1)
     {
         adc_select_input('0' - '0');
+        uint32_t channel0result = adc_read();
 
-        uint32_t result = adc_read();
-        printf("%d\n", result);
+        adc_select_input('1' - '0');
+        uint32_t channel1result = adc_read();
+
+        adc_select_input('2' - '0');
+        uint32_t channel2result = adc_read();
+
+        printf("%d-%d-%d\n", channel0result, channel1result, channel2result);
     }
 }
