@@ -1,0 +1,63 @@
+:root {
+    background-color: #111111;
+}
+
+body {
+    color: #e5e5e5 !important;
+    background-color: #111111 !important;
+
+    margin: 0;
+    padding: 0;
+
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+h3 {
+
+    font-size: 1.05rem !important;
+    font-weight: 300 !important;
+    margin: 0 !important;
+}
+
+.graph {
+    max-height: 20vh;
+}
+
+.monitor {
+    padding: 3rem 2rem 3rem 2rem;
+}
+
+.deviceInfo {
+    margin-top: auto;
+    margin: 1rem 2rem 1rem 2rem;
+
+    padding: 1rem 0rem 1rem 0rem;
+    border-color: #a2a2a3;
+    border-style: solid;
+    border-radius: .25rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: start;
+}
+
+.buttonContainer {
+    flex-basis: 17.5%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.connect-button {
+    border: none;
+    padding: .5rem 1rem .5rem 1rem;
+    border-radius: 2rem;
+    font-weight: 500;
+}
+
+.infoContainer {
+    display: flex;
+    flex-direction: column;
+}

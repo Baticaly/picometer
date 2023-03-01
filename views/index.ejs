@@ -6,19 +6,31 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="stylesheets/style.css" />
+    <link rel="stylesheet" href="stylesheets/dashboard.css" />
     <link rel=stylesheet type=text/css
         href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.min.css" media="all">
     <title>Picometer</title>
 </head>
 
 <body>
-    <button id="connect">
-        Scan
-    </button>
 
-    <canvas id="ADC0" class="graph"></canvas>
-    <canvas id="ADC1" class="graph"></canvas>
-    <canvas id="ADC2" class="graph"></canvas>
+    <div class="monitor">
+        <canvas id="ADC0" class="graph"></canvas>
+        <canvas id="ADC1" class="graph"></canvas>
+        <canvas id="ADC2" class="graph"></canvas>
+    </div>
+
+    <div class="deviceInfo">
+        <div class="buttonContainer">
+            <button id="connect" class="connect-button">Connect</button>
+        </div>
+
+        <div class="infoContainer">
+            <h3>Device ID: </h3>
+            <h3>usbVendorId: </h3>
+            <h3>usbProductId: </h3>
+        </div>
+    </div>
 
 </body>
 
