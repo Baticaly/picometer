@@ -6,10 +6,10 @@ Raspberry Pi Pico based analog input monitoring dashboard built with ExpressJS.
 
 ## **Setup**
 
-### Pico UF2 setup
-No need to build from source - you can use the provided UF2 image in `/pico` directory.
+### **1. Pico UF2 setup**
+No need to build from source - you can use the provided UF2 image in `/pico/build` directory.
 
-### Dashboard Setup
+### **2. Dashboard Setup**
 
 - Install required libraries;
 ```javascript
